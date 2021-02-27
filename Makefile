@@ -1,6 +1,6 @@
 # Makefile for et-sdl-sound
 
-_GCC_PATH=/usr/x86_64-pc-linux-gnu/gcc-bin/3.4.6/
+_GCC_PATH=/usr/bin/
 
 LD = $(_GCC_PATH)g++
 CPP = $(_GCC_PATH)g++

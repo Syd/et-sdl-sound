@@ -159,7 +159,7 @@ void initHooks()
 		dma = (dma_t *) 0x08aedc04;
 		break;
 	
-	case 0x6ab49f82:
+	case 0x00000000:
 		version = "ET 2.60b";
 		
 		writeJump((void *) 0x08188250, (void *) SNDDMA_Init);
@@ -218,34 +218,27 @@ void initHooks()
 		break;
 	
 	default:
-		std::cout << "You are not running a recognized version of Enemy Territory or RTCW (CRC32 = " << (void *) CRC32  << ")" << std::endl;
 		return; // we don't need to exit( 1 )
 	}
 	
-	std::cout << "Found " << version << " (CRC32 = " << (void *) CRC32 << ")" << std::endl;
 	
 	if (backend == OSS) {
-		std::cout << "Using default OSS backend." << std::endl;
 		return;
 	}
 #ifdef __ALSA
 	else if (backend == ALSA) {
-		std::cout << "Using ALSA backend." << std::endl;
 		etalsa = new EtALSA(dma);
 	}
 #endif
 #ifdef __SDL
 	else if (backend == SDL) {
-		std::cout << "Using SDL backend." << std::endl;
 		etsdl = new EtSDL(dma, (void *) sdl_audio_callback, quake3);
 	}
 #endif
 	else {
-		std::cout << "Requested backend is not available, using OSS." << std::endl;
 		return;
 	}
 	
-	std::cout << "et-sdl-sound-" << __ETSDL_VERSION << " (" << __DATE__ << " " << __TIME__ << ", " << __VERSION__ << ") loaded." << std::endl;
 }
 
 void writeAddr(void *addr, void *dest)
@@ -273,16 +266,13 @@ void unprotectPage(void *addr)
 
 void printMem(void *addr, int size)
 {
-	std::cout << addr << ": ";
 	for (int i = 0; i < size; i++)
 		printf("%02x ", ((unsigned char*) addr)[i]);
-	std::cout << std::endl;
 }
 
 qboolean SNDDMA_Init(void)
 {
 #ifdef __DEBUG
-	std::cout << "SNDDMA_Init()" << std::endl;
 #endif
 
 #ifdef __ALSA
@@ -300,7 +290,6 @@ qboolean SNDDMA_Init(void)
 int SNDDMA_GetDMAPos(void)
 {
 #ifdef __DEBUG
-	std::cout << "SNDDMA_GetDMAPos()" << std::endl;
 #endif
 
 #ifdef __ALSA
@@ -319,7 +308,6 @@ int SNDDMA_GetDMAPos(void)
 void SNDDMA_Shutdown(void)
 {
 #ifdef __DEBUG
-	std::cout << "SNDDMA_Shutdown()" << std::endl;
 #endif
 
 #ifdef __ALSA
@@ -336,7 +324,6 @@ void SNDDMA_Shutdown(void)
 void SNDDMA_BeginPainting(void)
 {
 #ifdef __DEBUG
-	std::cout << "SNDDMA_BeginPainting()" << std::endl;
 #endif
 
 #ifdef __ALSA
@@ -353,7 +340,6 @@ void SNDDMA_BeginPainting(void)
 void SNDDMA_Submit(void)
 {
 #ifdef __DEBUG
-	std::cout << "SNDDMA_Submit()" << std::endl;
 #endif
 
 #ifdef __ALSA
@@ -378,10 +364,6 @@ unsigned int calculateProcCRC32()
 	char filename[PATH_MAX];
 	ssize_t len;
 	
-	if ((len = readlink("/proc/self/exe", filename, sizeof(filename) - 1)) < 1) {
-		std::cout << "Can't find actual binary." << std::endl;
-		return 0x00000000;
-	}
 	filename[len] = '\0';
 	
 	// read file
@@ -389,7 +371,6 @@ unsigned int calculateProcCRC32()
 	exe.open(filename);
 	
 	if (!exe.is_open() | !exe.good()) {
-		std::cout << "Can't open " << filename << std::endl;
 		return 0x00000000;
 	}
 	
@@ -402,7 +383,6 @@ unsigned int calculateProcCRC32()
 	exe.read((char*) file, fsize);
 	exe.close();
 	
-	std::cout << "Read " << filename << " (" << fsize << " bytes)" << std::endl;
 	
 	// generate crc_table
 	unsigned int crc_table[256];
